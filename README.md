@@ -17,6 +17,7 @@ $ python bars.py <user_longitude> <user_latitude>
 ```
 
 ## Example
+```
 python bars.py 37.6242342 55.763443453
 * The smallest bar in Moscow is "Сушистор":
 	Михалковская улица, дом 8
@@ -29,7 +30,7 @@ python bars.py 37.6242342 55.763443453
 * The closest bar for you is "Bubo Tutor Club and Gastropub":
 	улица Рождественка, дом 12/1, строение 1
 	Тел.: +7(499) 707-88-69
-
+```
 # Цели проекта
 
 The project is created for educational purposes for [DEVMAN.org](https://devman.org)
