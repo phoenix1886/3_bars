@@ -31,6 +31,6 @@ python bars.py 37.6242342 55.763443453
 	улица Рождественка, дом 12/1, строение 1
 	Тел.: +7(499) 707-88-69
 ```
-# Цели проекта
+# Targets of a project
 
 The project is created for educational purposes for [DEVMAN.org](https://devman.org)
