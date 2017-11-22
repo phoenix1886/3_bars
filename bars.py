@@ -5,20 +5,19 @@ import argparse
 
 class Bar:
 
-    def __init__(self, raw_bar_data):
-        self.name = raw_bar_data["properties"]["Attributes"]["Name"]
-        self.seats_count = (raw_bar_data['properties']['Attributes']
+    def __init__(self, raw_bar_obj):
+        self.name = raw_bar_obj["properties"]["Attributes"]["Name"]
+        self.seats_count = (raw_bar_obj['properties']['Attributes']
                             ['SeatsCount'])
-        self.longitude = raw_bar_data['geometry']['coordinates'][0]
-        self.latitude = raw_bar_data['geometry']['coordinates'][1]
-        self.address = raw_bar_data['properties']['Attributes']['Address']
-        self.phone_number = (raw_bar_data['properties']['Attributes']
+        self.longitude = raw_bar_obj['geometry']['coordinates'][0]
+        self.latitude = raw_bar_obj['geometry']['coordinates'][1]
+        self.address = raw_bar_obj['properties']['Attributes']['Address']
+        self.phone_number = (raw_bar_obj['properties']['Attributes']
                              ['PublicPhone'][0]["PublicPhone"])
 
     def __str__(self):
-        return '"{name}":\n\t{addr}\n\tТел.: +7{tel}'.format(name=self.name,
-                                                        addr=self.address,
-                                                        tel=self.phone_number)
+        return '"{name}":\n\t{addr}\n\tТел.: +7{tel}'.format(
+            name=self.name, addr=self.address, tel=self.phone_number)
 
     def calc_distance_to_certain_point(self, point_longitude, point_latitude):
         distance = calc_distance((self.longitude, self.latitude),
@@ -26,34 +25,33 @@ class Bar:
         return distance
 
 
-def load_api_key():
-    api_key_file_path = './key.txt'
+def load_api_key(api_key_file_path):
     with open(api_key_file_path) as file:
         api_key = file.read().rstrip()
         return api_key
 
 
-def arguments_parser():
+def get_arguments_parser():
     parser = argparse.ArgumentParser()
+    parser.add_argument('path_to_api', help='path to file with api-key')
     parser.add_argument('longitude', type=float,
                         help='longitude of users current location')
     parser.add_argument('latitude', type=float,
                         help='latitude of users current location')
-    arguments = parser.parse_args()
-    return arguments.longitude, arguments.latitude
+    return parser
 
 
-def load_data():
-    request_params = {'api_key': load_api_key()}
+def load_data(api_key):
+    request_params = {'api_key': api_key}
     request = requests.get('https://apidata.mos.ru/v1/datasets/1796/features',
                            params=request_params)
-    decoded_data = request.json()
-    return decoded_data
+    raw_data = request.json()
+    return raw_data
 
 
-def get_list_of_bars(decoded_data):
-    list_of_bars = [Bar(raw_bar_data) for raw_bar_data
-                    in decoded_data["features"]]
+def get_list_of_bars(raw_data):
+    list_of_bars = [Bar(raw_bar_obj) for raw_bar_obj
+                    in raw_data["features"]]
     return list_of_bars
 
 
@@ -76,10 +74,14 @@ def get_closest_bar(list_of_bars, user_longitude, user_latitude):
 
 
 if __name__ == '__main__':
-    user_longitude, user_latitude = arguments_parser()
+    arguments_parser = get_arguments_parser()
+    arguments = arguments_parser.parse_args()
+    user_longitude, user_latitude = arguments.longitude, arguments.latitude
+    path_to_api_file = arguments.path_to_api
 
-    decoded_data = load_data()
-    list_of_bars = get_list_of_bars(decoded_data)
+    api_key = load_api_key(path_to_api_file)
+    bars_raw_data = load_data(api_key)
+    list_of_bars = get_list_of_bars(bars_raw_data)
 
     smallest_bar = get_smallest_bar(list_of_bars)
     biggest_bar = get_biggest_bar(list_of_bars)
