@@ -13,7 +13,7 @@ pip install -r requirements.txt
 
 To use the script, one should obtain api key at https://data.mos.ru. 
 
-The script requires 3 positional arguments for word:
+The script requires 3 positional arguments:
 1. <path_to_api_key_file>: path to the file, containing api key for data.mos.ru services
 2. <user_longitude>: longitude of user GPS coordinate
 3. <user_latitude>: latitude of user GPS coordinate
